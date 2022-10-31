@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions, TextInput, ScrollView, Animated, Pressable, FlatList } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import back from '../../../assets/img/back.png'
+import back from '../../../assets/back.png'
 import { AntDesign } from '@expo/vector-icons'
 import SimpleSelectButton from 'react-native-simple-select-button'
+
 
 const Home = () => {
   const {height, windth} = Dimensions.get('window');
