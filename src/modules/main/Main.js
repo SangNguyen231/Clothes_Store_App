@@ -3,15 +3,17 @@ import React, { useEffect, useRef, useState } from 'react'
 import back from '../../../assets/back.png'
 import { AntDesign } from '@expo/vector-icons'
 import SimpleSelectButton from 'react-native-simple-select-button'
+import logo from '../../../assets/logo.png'
 
 
-const Home = () => {
+const Home = ({navigation}) => {
   const {height, windth} = Dimensions.get('window');
   const [choise, setChoise] =  useState('All');
   const [products, setProducts] = useState([]);
+  var arrayProduct = new Array();
 
   const getAllProduct= async ()=>{
-    fetch('https://63512fa53e9fa1244e57aeb0.mockapi.io/store/products')
+    fetch('https://63512fa53e9fa1244e57aeb0.mockapi.io/store/Products')
     .then(response=>response.json())
     .then(data=>setProducts(data))
   }
@@ -24,13 +26,65 @@ const Home = () => {
     setChoise(category)
   }
 
+  const FlatListProducts=()=>{
+    if(choise==='All'){
+      products.forEach(item=>{
+        arrayProduct.push(item)
+      })
+    }
+    else{
+      products.forEach(item=>{
+        if(item.CategoryId===choise){
+          arrayProduct.push(item)
+        }
+      })
+    }
+    return(
+      <FlatList data={arrayProduct}
+                  renderItem={
+                    ({item, index})=>{
+                      return(
+                        <View style={styles.ListContainer}>
+                          <TouchableOpacity onPress={()=>getDetail(item)}>
+                            <View style={styles.itemContainer}>
+                              <Image style={styles.imgProduct}
+                                      source={{uri:item.imageModel}}>
+                                      </Image>
+                              <View style={{width:'100%',flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}>
+                                <View style={{width:'75%'}}>
+                                  <Text style={[styles.itemName]}>{item.name}</Text>
+                                  <Text style={[styles.itemPrice]}>{item.price}$</Text>
+                                </View>
+                                <TouchableOpacity style={styles.buttonCart}>
+                                  <AntDesign name='shoppingcart' size={20}></AntDesign>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      )
+                    }
+        } numColumns={2}></FlatList>
+    )
+  }
+
+  const getDetail=(item)=>{
+    navigation.navigate('Detail',{name:item.name,
+                                price:item.price,
+                                CategoryId: item.CategoryId,
+                                imageModel:item.imageModel,
+                                imageProduct: item.imageProduct,
+                                describe: item.describe})
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <TouchableOpacity>
           <Image source={back} style={{height:30, width:30}}></Image>
         </TouchableOpacity>
-        <Text style={styles.textHeader}>Welcome</Text>
+        {/* <Text style={styles.textHeader}>Welcome</Text> */}
+        <Image source={logo} style={{height:60, width:100}}></Image>
         <TouchableOpacity>
           <Image style={styles.imageHeader}
                   source={{uri:'https://img.freepik.com/free-photo/woman-black-trousers-purple-blouse-laughs-leaning-stand-with-elegant-clothes-pink-background_197531-17614.jpg?w=2000'}}></Image>
@@ -99,29 +153,7 @@ const Home = () => {
       </View>
 
       <View style={styles.FlatList}>
-        <FlatList data={products}
-                  renderItem={
-                    ({item, index})=>{
-                      return(
-                        <View style={styles.ListContainer}>
-                          <View style={styles.itemContainer}>
-                            <Image style={styles.imgProduct}
-                                    source={{uri:item.imageModel}}>
-                                    </Image>
-                            <View style={{width:'100%',flexDirection:'row', alignItems:'center', justifyContent:'space-around'}}>
-                              <View style={{width:'75%'}}>
-                                <Text style={[styles.itemName]}>{item.name}</Text>
-                                <Text style={[styles.itemPrice]}>{item.price}$</Text>
-                              </View>
-                              <TouchableOpacity style={styles.buttonCart}>
-                                <AntDesign name='shoppingcart' size={20}></AntDesign>
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                        </View>
-                      )
-                    }
-        } numColumns={2}></FlatList>
+        <FlatListProducts></FlatListProducts>
       </View>
     </View>
   )
@@ -161,6 +193,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     justifyContent:'space-between',
     flex:0.8,
+    marginTop:-20
   },
   searchText:{
     backgroundColor:'white',

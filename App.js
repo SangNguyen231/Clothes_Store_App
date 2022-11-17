@@ -10,6 +10,7 @@ import Register from './src/modules/auth/Register';
 import Desktop from './src/modules/desktop/Desktop';
 import Home from './src/modules/home/Home';
 import Main from './src/modules/main/Main';
+import Detail from './src/modules/detailProduct/Detail';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen name='Register' component={Register}></Stack.Screen>
         <Stack.Screen name='Home' component={Home}></Stack.Screen>
         <Stack.Screen name='Main' component={Main}></Stack.Screen>
+        <Stack.Screen name='Detail' component={Detail}></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
