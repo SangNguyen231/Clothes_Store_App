@@ -48,7 +48,7 @@ const Login = (props) => {
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity
                                 onPress={()=>{
-                                    props.navigation.navigate("Home")
+                                    props.navigation.navigate("Main")
                                 }}
                                 style={styles.button}
                             >
