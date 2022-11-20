@@ -11,6 +11,8 @@ import Desktop from './src/modules/desktop/Desktop';
 import Home from './src/modules/home/Home';
 import Main from './src/modules/main/Main';
 import Detail from './src/modules/detailProduct/Detail';
+import Cart from './src/modules/cart/Cart';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +26,7 @@ export default function App() {
         <Stack.Screen name='Home' component={Home}></Stack.Screen>
         <Stack.Screen name='Main' component={Main}></Stack.Screen>
         <Stack.Screen name='Detail' component={Detail}></Stack.Screen>
+        <Stack.Screen name='Cart' component={Cart}></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );

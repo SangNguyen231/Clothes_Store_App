@@ -1,7 +1,36 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Alert } from 'react-native'
+import React, { useState } from 'react'
 
 const Login = (props) => {
+
+    const [passWord, setPassWord] = useState();
+    const [phoneNumber, setPhoneNumber] = useState()
+
+    const [host, setHost] = useState('192.168.1.228')
+
+    const [data, setData] = useState()
+    const login = async () => {
+        await fetch('http://' + host + ':8080/user/login/' + phoneNumber + '/' + passWord, {
+            method: 'GET', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(data => data.json())
+        .then((data) => {
+            setData(data)
+            console.log(data)
+            if(data == ""){
+                Alert.alert("Incorrect username or password")
+            }else{
+                props.navigation.navigate("Home",{
+                    phoneNumber: phoneNumber,
+                    host: host
+                })
+            }
+        })
+    }
+
     return (
         <View style={{ backgroundColor: '#fff', flex: 1 }}>
             <View style={{ marginTop: 100 }}>
@@ -22,6 +51,7 @@ const Login = (props) => {
                                 <TextInput
                                     placeholder='Phone number'
                                     style={styles.input}
+                                    onChangeText={setPhoneNumber}
                                 />
                             </View>
                         </View>
@@ -32,6 +62,7 @@ const Login = (props) => {
                                 <TextInput
                                     placeholder='Password'
                                     style={styles.input}
+                                    onChangeText={setPassWord}
                                     secureTextEntry
                                 />
                             </View>
@@ -48,7 +79,7 @@ const Login = (props) => {
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity
                                 onPress={()=>{
-                                    props.navigation.navigate("Main")
+                                    login()
                                 }}
                                 style={styles.button}
                             >
@@ -93,6 +124,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 10,
         marginTop: 5,
+        width:500
     },
     button: {
         backgroundColor: 'rgba(0,101,255,255)',

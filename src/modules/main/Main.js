@@ -6,7 +6,7 @@ import SimpleSelectButton from 'react-native-simple-select-button'
 import logo from '../../../assets/logo.png'
 
 
-const Home = ({navigation}) => {
+const Home = ({navigation, data1, host}) => {
   const {height, windth} = Dimensions.get('window');
   const [choise, setChoise] =  useState('All');
   const [products, setProducts] = useState([]);
@@ -55,7 +55,21 @@ const Home = ({navigation}) => {
                                   <Text style={[styles.itemName]}>{item.name}</Text>
                                   <Text style={[styles.itemPrice]}>{item.price}$</Text>
                                 </View>
-                                <TouchableOpacity style={styles.buttonCart}>
+                                <TouchableOpacity style={styles.buttonCart}
+                                  onPress={()=>{
+                                    try {
+                                      fetch('http://' + host + ':8080/cart/', {
+                                        method: 'POST', // or 'PUT'
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({name: item.name, imageProduct: item.imageProduct,price: item.price,quantity: 1,userId: data1.userId}),
+                                      })
+                                    } catch (error) {
+                                      console.log('Error:', error);
+                                    }
+                                  }}
+                                >
                                   <AntDesign name='shoppingcart' size={20}></AntDesign>
                                 </TouchableOpacity>
                               </View>
@@ -74,7 +88,10 @@ const Home = ({navigation}) => {
                                 CategoryId: item.CategoryId,
                                 imageModel:item.imageModel,
                                 imageProduct: item.imageProduct,
-                                describe: item.describe})
+                                describe: item.describe,
+                                data: data1,
+                                host: host
+                              })
   }
 
   return (

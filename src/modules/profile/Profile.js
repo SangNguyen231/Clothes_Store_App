@@ -1,24 +1,29 @@
-import { Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import { FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { CheckBox } from 'react-native-elements'
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
+import { useRoute } from '@react-navigation/native';
 
 
-const Profile = () => {
+export default function Profile({data1 ,host}) {
 
   const [visible, setVisible] = useState(false)
 
   const [checkMale, setCheckMale] = useState(true)
   const [checkFemale, setCheckFemale] = useState(false)
 
-  const [firstName, setFirstName] = useState('Nguyễn Trần Phước')
+  const [phoneNumber, setPhoneNumber] = useState(data1.phoneNumber)  
 
-  const [lastName, setLastName] = useState('Sang')
+  const [firstName, setFirstName] = useState(data1.firstName)
 
-  const [gender, setGender] = useState('Male')
+  const [lastName, setLastName] = useState(data1.lastName)
 
-  const [birthDay, setBirthDay] = useState('23/1/2001')
+  const [gender, setGender] = useState(data1.gender)
+
+  const [birthDay, setBirthDay] = useState(data1.birthDay)
+
+  //const [host, setHost] = useState('192.168.1.228')
 
   const [date, setDate] = useState(new Date());
   const showMode = () => {
@@ -34,9 +39,23 @@ const Profile = () => {
     setBirthDay(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
   };
 
+  const editDataApi = async (firstName, lastName, gender, birthDay) => {
+		try {
+			await fetch('http://' + host + ':8080/user/' + data1.userId, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({firstName: firstName,lastName: lastName,gender: gender,birthDay: birthDay}),
+			});
+		} catch (error) {
+			console.log('Error:', error);
+		}
+	};
+
   return (
-    <LinearGradient start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={['#e2dcdc', '#e7dbd7', '#e8dad9']} style={styles.linearGradient}>
-      <View style={{ backgroundColor: '#ebe7e5', width: 350, borderRadius: 20, marginTop: 60 }}>
+    <LinearGradient start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} colors={['#f2f2f2', '#f2f2f2']} style={styles.linearGradient}>
+      <View style={{ backgroundColor: '#ebe7e5', width: 350, borderRadius: 20, marginTop: 100 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, marginLeft: 30 }}>
           <Image source={require('../../../assets/icon/user1.png')} style={{ width: 30, height: 30 }} />
           <View style={{ marginLeft: 20 }}>
@@ -47,7 +66,7 @@ const Profile = () => {
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, marginLeft: 30 }}>
           <Image source={require('../../../assets/icon/telephone.png')} style={{ width: 30, height: 30 }} />
           <View style={{ marginLeft: 20 }}>
-            <Text style={{ fontSize: 17, color: '#625d5a' }}>0898899703</Text>
+            <Text style={{ fontSize: 17, color: '#625d5a' }}>{phoneNumber}</Text>
             <Text style={{ color: 'gray' }}>Phone number</Text>
           </View>
         </View>
@@ -71,7 +90,7 @@ const Profile = () => {
         <TouchableOpacity
           style={{ width: '100%', padding: 12, alignItems: 'center', flexDirection: 'row', marginLeft: 20, marginTop: 10 }}
           onPress={() => {
-            if (checkMale == true) {
+            if (gender == "Male") {
               setCheckMale(true)
               setCheckFemale(false)
             } else {
@@ -88,7 +107,7 @@ const Profile = () => {
         <TouchableOpacity
           style={{ width: '100%', padding: 12, alignItems: 'center', flexDirection: 'row', marginLeft: 20, marginTop: 10 }}
           onPress={() => {
-
+            getUser()
           }}
         >
           <Image source={require('../../../assets/icon/setting.png')} style={{ height: 30, width: 30 }} />
@@ -101,16 +120,16 @@ const Profile = () => {
         visible={visible}
       >
         <View>
-          <View style={{ backgroundColor: '#0a9cf9', height: 50, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ backgroundColor: '#0a9cf9', height: 90, flexDirection: 'row', alignItems: 'flex-end' }}>
             <TouchableOpacity
-              style={{ marginLeft: 15 }}
+              style={{ marginLeft: 15, marginBottom:20 }}
               onPress={() => {
                 setVisible(false)
               }}
             >
               <Text style={{ color: 'white' }}>Close</Text>
             </TouchableOpacity>
-            <Text style={{ marginLeft: 80, color: 'white', fontSize: 18 }}>Personal information</Text>
+            <Text style={{ marginLeft: 80, color: 'white', fontSize: 18,marginBottom:20 }}>Personal information</Text>
           </View>
           <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 15 }}>
             <View style={{ marginLeft: 30, width: '70%' }}>
@@ -172,7 +191,10 @@ const Profile = () => {
                 alignItems: 'center',
                 width: '80%',
               }}
-              onPress={() => { setVisible(false) }}
+              onPress={() => { 
+                setVisible(false) 
+                editDataApi(firstName,lastName,gender,birthDay)
+              }}
             >
               <Text style={{ color: 'white', fontWeight: '700', fontSize: 16 }}>Save</Text>
             </TouchableOpacity>
@@ -182,8 +204,6 @@ const Profile = () => {
     </LinearGradient>
   )
 }
-
-export default Profile
 
 const styles = StyleSheet.create({
   linearGradient: {

@@ -32,18 +32,36 @@ export default function Detail({ navigation }) {
         <Text style={styles.text}>${data.price}</Text>
       </View>
 
-      <ScrollView style={{marginLeft:30, marginRight:30, marginTop:10,marginBottom:10}}>
-            {/* <Text style={styles.describe}>{data.describe}</Text> */}
-            <ReadMore style={styles.describe}>
-                {data.describe}
-            </ReadMore>
+      <ScrollView style={{ marginLeft: 30, marginRight: 30, marginTop: 10, marginBottom: 10 }}>
+        {/* <Text style={styles.describe}>{data.describe}</Text> */}
+        <ReadMore style={styles.describe}>
+          {data.describe}
+        </ReadMore>
       </ScrollView>
 
       <View style={styles.btnContainer}>
-        <TouchableOpacity style={styles.btnBuy}>
+        <TouchableOpacity style={styles.btnBuy}
+          onPress={() => {
+            navigation.navigate("Home")
+          }}
+        >
           <Text style={styles.textBuy}>Buy Now</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnCart}>
+        <TouchableOpacity style={styles.btnCart}
+          onPress={() => {
+            try {
+              fetch('http://' + data.host + ':8080/cart/', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({name: data.name, imageProduct: data.imageProduct,price: data.price,quantity: 1,userId: data.data.userId}),
+              })
+            } catch (error) {
+              console.log('Error:', error);
+            }
+          }}
+        >
           <FontAwesome5 name="cart-plus" size={20} color="pink" />
         </TouchableOpacity>
       </View>
@@ -99,9 +117,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginLeft:30,
-    marginRight:30,
-    marginBottom:20
+    marginLeft: 30,
+    marginRight: 30,
+    marginBottom: 20
   },
   btnCart: {
     height: 60,
